@@ -1,0 +1,20 @@
+name: verify
+
+on:
+  push:
+    branches: ["main", "upgrade/**"]
+  pull_request:
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Python syntax and repo checks
+        run: python3 scripts/verify_repo.py
+      - name: Hook smoke
+        run: python3 hooks/smoke.py
+      - name: Practical structural checks
+        run: python3 scripts/verify_practical.py
+      - name: Shell syntax
+        run: bash -n install.sh

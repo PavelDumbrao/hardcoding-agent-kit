@@ -1,44 +1,76 @@
 # Hard Coding Agent Kit
 
-Готовый набор для твоего ИИ-агента (ZCode / Claude Code / Codex): инструкция-шаблон,
-хуки-охрана и Telegram-уведомления. Без паролей — только плейсхолдеры.
+Ученический Practical Hard Coding PRO про три слоя управления AI coding agent:
 
-## ⚡ Самый быстрый путь (для ленивых — как мы любим)
+**Инструкция → Skill → Hook.**
 
-Открой **[PROMPT.md](PROMPT.md)**, скопируй серый блок целиком и вставь своему агенту
-одним сообщением. Агент сам скачает кит, установит, проведёт тебя по секретам,
-подключит конфиг под свой рантайм и всё проверит. От тебя — ответы на его вопросы.
+Главная цель — не изучить термины, а собрать маленькую рабочую систему:
+- агент получает постоянные правила;
+- умеет подгружать отдельный Skill по задаче;
+- автоматически блокирует опасное чтение секретов;
+- подмешивает continuity при старте;
+- присылает Telegram-уведомление после завершения;
+- доказывает, что установка реально работает.
 
-## 📘 Хочешь понять, ЧТО ставишь?
+## Начни отсюда
 
-Открой **[LESSON-SKILLS-HOOKS.md](LESSON-SKILLS-HOOKS.md)** — подробный урок
-«Что такое Скиллы, Инструкции и Хуки» с теорией, практикой и FAQ.
+1. Открой [`practical/index.html`](practical/index.html) — это основной интерактивный Practical.
+2. Если удобнее Markdown — [`PRACTICAL.md`](PRACTICAL.md).
+3. Для пути «одна вставка агенту» — [`PROMPT.md`](PROMPT.md).
 
 ## Что внутри
 
-| Файл/папка | Что это |
-|---|---|
-| `LESSON-SKILLS-HOOKS.md` | Урок-гайд: теория на пальцах + установка за 6 шагов + FAQ |
-| `AGENTS.md` | Шаблон глобальной инструкции (трудовой договор агента) |
-| `hooks/` | 5 хуков: планёрка, переводчик запросов, охрана, учётчик, Telegram-звонок (+ ранбук) |
-| `config-examples/` | Готовый блок `hooks` для `~/.zcode/cli/config.json` и примеры MCP |
-| `secrets-template/` | Заготовка секретов с плейсхолдерами |
-| `install.sh` | Безопасный установщик (ничего не перезаписывает без нужды) |
-
-## Быстрая установка
-
-```bash
-bash <путь_к_папке>/install.sh
-```
-
-Дальше — по шагам из урока (раздел 7): заполнить `~/.zcode/secrets/telegram.env`,
-вставить блок `hooks` в конфиг, перезапустить ZCode, проверить `python3 ~/.zcode/hooks/smoke.py`.
+- `AGENTS.md` — короткий шаблон постоянной инструкции.
+- `skills/hardcoding-verify-done/` — настоящий Agent Skill с `SKILL.md`.
+- `hooks/` — универсальное ядро lifecycle hooks.
+- `adapters/` — отдельные конфиги для ZCode, Claude Code и Codex.
+- `install.py` — безопасный installer с backup + merge, без затирания существующих конфигов.
+- `configure_telegram.py` — локальный ввод токена без передачи секрета в чат.
+- `verify_install.py` — read-only проверка установки.
+- `hooks/smoke.py` — тесты самого набора.
+- `practical/index.html` — self-contained mobile-first Practical.
 
 ## Безопасность
 
-- В наборе нет реальных токенов, паролей и адресов серверов — только заглушки `<в_угловых_скобках>`.
-- Свои секреты храни только в `~/.zcode/secrets/telegram.env` (chmod 600) — этот файл не входит в git.
-- Хук-охрана (PreToolUse) по умолчанию блокирует чтение секретов агентом и опасные команды.
+Никогда не отправляй токены, пароли и содержимое `.env` в обычный чат с агентом.
 
-Формат скиллов — открытый стандарт [Agent Skills](https://agentskills.io): те же папки понимают
-ZCode, Claude Code, Codex, Gemini CLI и Mistral Vibe.
+Telegram token вводится **только локально** через:
+
+```bash
+python3 ~/.hardcoding-agent-kit/configure_telegram.py
+```
+
+Installer:
+- не стирает существующие инструкции;
+- перед изменением существующего JSON-конфига делает timestamped backup;
+- добавляет только свои hook-группы;
+- не удаляет MCP, settings и другие существующие поля;
+- при невалидном JSON останавливается без изменений.
+
+## Runtime support
+
+- **ZCode** — adapter по текущей схеме `~/.zcode/cli/config.json`.
+- **Claude Code** — adapter в `~/.claude/settings.json`.
+- **Codex** — adapter в `~/.codex/hooks.json`.
+
+Hook scripts живут в одном нейтральном каталоге:
+
+`~/.hardcoding-agent-kit/hooks/`
+
+Это убирает ошибку старой версии, где Claude/Codex ссылались на `~/.zcode/hooks`.
+
+## Проверка
+
+После установки:
+
+```bash
+python3 ~/.hardcoding-agent-kit/hooks/smoke.py
+python3 ~/.hardcoding-agent-kit/verify_install.py --runtime <zcode|claude|codex>
+python3 ~/.hardcoding-agent-kit/hooks/test_notify.py
+```
+
+`smoke.py` проверяет локальную логику. `verify_install.py` проверяет wiring. `test_notify.py` делает реальный Telegram E2E.
+
+---
+
+Принцип Practical: **смысл → карта → AI делает технику → маленькие победы → evidence → E2E → Definition of Done**.

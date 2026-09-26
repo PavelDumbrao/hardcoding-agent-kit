@@ -1,0 +1,50 @@
+{
+  "description": "Hard Coding Agent Kit lifecycle hooks",
+  "hooks": {
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "HCAK_RUNTIME=codex python3 ~/.hardcoding-agent-kit/hooks/session_start.py",
+            "statusMessage": "Loading project continuity",
+            "additionalContextLimit": 8000
+          }
+        ]
+      }
+    ],
+    "PreToolUse": [
+      {
+        "matcher": "Bash|Read|Write|Edit|MultiEdit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "HCAK_RUNTIME=codex python3 ~/.hardcoding-agent-kit/hooks/pre_tool_use.py",
+            "statusMessage": "Checking safety"
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "HCAK_RUNTIME=codex python3 ~/.hardcoding-agent-kit/hooks/post_tool_use.py"
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "HCAK_RUNTIME=codex python3 ~/.hardcoding-agent-kit/hooks/stop_notify.py",
+            "statusMessage": "Sending Telegram notification"
+          }
+        ]
+      }
+    ]
+  }
+}
