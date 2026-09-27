@@ -71,12 +71,17 @@ def main()->int:
     for f in ("configure_telegram.py","verify_install.py","PRACTICAL.md"): shutil.copy2(KIT/f,DEST/f)
     secret_dir=DEST/"secrets";secret_dir.mkdir(parents=True,exist_ok=True);secret=secret_dir/"telegram.env"
     if not secret.exists(): shutil.copy2(KIT/"secrets-template"/"telegram.env.example",secret);secret.chmod(stat.S_IRUSR|stat.S_IWUSR)
-    skill_dst=Path(cfg["skill_dir"])/"hardcoding-verify-done";backups+=copy_tree_with_backups(KIT/"skills"/"hardcoding-verify-done",skill_dst)
+    skills_src=KIT/"skills"
+    installed_skills=[]
+    if skills_src.is_dir():
+        for skill_src in sorted(p for p in skills_src.iterdir() if (p/"SKILL.md").exists()):
+            backups+=copy_tree_with_backups(skill_src,Path(cfg["skill_dir"])/skill_src.name)
+            installed_skills.append(skill_src.name)
     instruction=Path(cfg["instruction"]);instruction.parent.mkdir(parents=True,exist_ok=True)
     if not instruction.exists(): shutil.copy2(KIT/"AGENTS.md",instruction)
     config_path,config_backup=merge_config(runtime)
     if config_backup: backups.append(config_backup)
-    print(f"PASS: runtime={runtime}");print(f"PASS: hooks={DEST/'hooks'}");print(f"PASS: skill={skill_dst}");print(f"PASS: config merged={config_path}");print(f"PASS: instruction={'created' if instruction.exists() else 'missing'} {instruction}")
+    print(f"PASS: runtime={runtime}");print(f"PASS: hooks={DEST/'hooks'}");print(f"PASS: skills={len(installed_skills)} -> {cfg['skill_dir']}");print(f"PASS: config merged={config_path}");print(f"PASS: instruction={'created' if instruction.exists() else 'missing'} {instruction}")
     if backups:
         print("Backups:")
         for item in backups: print(" -",item)

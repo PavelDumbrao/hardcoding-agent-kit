@@ -21,7 +21,7 @@
 ## Что внутри
 
 - `AGENTS.md` — короткий шаблон постоянной инструкции.
-- `skills/hardcoding-verify-done/` — настоящий Agent Skill с `SKILL.md`.
+- `skills/` — **19 готовых Agent Skills**: `hardcoding-verify-done` + 18 практических (лендинги и маркетинг: expert-landing-express, marketing-landing-cro, viral-hooks, viral-short-form; дизайн и документы: cc-design, mobile-html-artifact, frontend-design, google-sheets-design; Telegram: telegram, telegram-mini-apps, telegram-initdata-validation, telegram-telegraph-publisher; инженерия: deployment-guide, hostinger-vps, supabase-integration, systematic-debugging, owasp-security, epic-planner). Все санитизированы — без секретов, только плейсхолдеры.
 - `hooks/` — универсальное ядро lifecycle hooks.
 - `adapters/` — отдельные конфиги для ZCode, Claude Code и Codex.
 - `install.py` — безопасный installer с backup + merge, без затирания существующих конфигов.

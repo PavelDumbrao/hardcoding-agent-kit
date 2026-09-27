@@ -1,0 +1,382 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>Автономный HTML-артефакт</title>
+  <meta name="description" content="Mobile-first HTML-страница с CTA, FAQ и надежным отображением без JavaScript." />
+  <style>
+    :root {
+      --bg: #f7efe3;
+      --surface: #fffaf2;
+      --surface-strong: #ffffff;
+      --text: #111111;
+      --muted: #6f675e;
+      --graphite: #171717;
+      --orange: #ff8a1f;
+      --gold: #d7a84f;
+      --green: #47b26b;
+      --line: rgba(17, 17, 17, .10);
+      --shadow: 0 20px 60px rgba(40, 28, 15, .14);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+      overflow-x: hidden;
+    }
+
+    body {
+      margin: 0;
+      min-width: 320px;
+      overflow-x: hidden;
+      padding-bottom: 104px;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+      line-height: 1.5;
+      color: var(--text);
+      background: var(--bg);
+    }
+
+    img, svg, video, canvas {
+      max-width: 100%;
+      height: auto;
+    }
+
+    a {
+      color: inherit;
+    }
+
+    .container {
+      width: min(100% - 32px, 1120px);
+      margin: 0 auto;
+    }
+
+    .hero {
+      padding: 36px 0 28px;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      margin: 0 0 18px;
+      padding: 8px 12px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: rgba(255, 255, 255, .72);
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 750;
+    }
+
+    h1, h2, h3, p {
+      margin-top: 0;
+    }
+
+    h1 {
+      max-width: 880px;
+      margin-bottom: 18px;
+      font-size: clamp(36px, 10vw, 68px);
+      line-height: 1.02;
+      letter-spacing: 0;
+    }
+
+    .lead {
+      max-width: 720px;
+      margin-bottom: 22px;
+      color: var(--muted);
+      font-size: 18px;
+    }
+
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin: 24px 0;
+    }
+
+    .button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 52px;
+      padding: 14px 18px;
+      border: 0;
+      border-radius: 999px;
+      background: var(--graphite);
+      color: #fff;
+      font-weight: 800;
+      text-decoration: none;
+      cursor: pointer;
+      touch-action: manipulation;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .button.secondary {
+      border: 1px solid var(--line);
+      background: var(--surface-strong);
+      color: var(--text);
+    }
+
+    .button:focus-visible,
+    .fixed-cta:focus-visible,
+    summary:focus-visible {
+      outline: 3px solid rgba(255, 138, 31, .45);
+      outline-offset: 3px;
+    }
+
+    .section {
+      padding: 28px 0;
+    }
+
+    .section h2 {
+      margin-bottom: 12px;
+      font-size: clamp(26px, 7vw, 42px);
+      line-height: 1.12;
+      letter-spacing: 0;
+    }
+
+    .grid {
+      display: grid;
+      gap: 12px;
+    }
+
+    .card {
+      padding: 18px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: rgba(255, 255, 255, .82);
+      box-shadow: 0 12px 36px rgba(40, 28, 15, .08);
+    }
+
+    .card h3 {
+      margin-bottom: 8px;
+      font-size: 18px;
+    }
+
+    .card p,
+    .muted {
+      color: var(--muted);
+    }
+
+    .section-visual {
+      margin: 24px 0;
+      padding: 10px;
+      border: 1px solid var(--line);
+      border-radius: 24px;
+      background: rgba(255, 255, 255, .72);
+      box-shadow: var(--shadow);
+    }
+
+    .visual-placeholder {
+      display: grid;
+      min-height: 220px;
+      place-items: center;
+      border-radius: 18px;
+      background:
+        linear-gradient(135deg, rgba(255, 138, 31, .20), rgba(71, 178, 107, .14)),
+        var(--graphite);
+      color: #fff;
+      text-align: center;
+      font-weight: 800;
+    }
+
+    .tabs {
+      position: relative;
+    }
+
+    .tab-input {
+      position: absolute;
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .tab-labels {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      margin-bottom: 14px;
+    }
+
+    .tab-labels label {
+      min-height: 48px;
+      padding: 12px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--surface-strong);
+      text-align: center;
+      font-weight: 800;
+      cursor: pointer;
+    }
+
+    .tab-panel {
+      display: none;
+    }
+
+    #tab-1:checked ~ .tab-labels label[for="tab-1"],
+    #tab-2:checked ~ .tab-labels label[for="tab-2"] {
+      background: var(--graphite);
+      color: #fff;
+    }
+
+    #tab-1:checked ~ .panel-1,
+    #tab-2:checked ~ .panel-2 {
+      display: block;
+    }
+
+    .faq-list {
+      display: grid;
+      gap: 10px;
+    }
+
+    .faq-item {
+      padding: 16px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--surface-strong);
+    }
+
+    .faq-item summary {
+      cursor: pointer;
+      font-weight: 800;
+    }
+
+    .faq-item p {
+      margin: 12px 0 0;
+      color: var(--muted);
+    }
+
+    .fixed-cta {
+      position: fixed;
+      right: 16px;
+      bottom: calc(14px + env(safe-area-inset-bottom));
+      left: 16px;
+      z-index: 1000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 56px;
+      padding: 14px 18px;
+      border-radius: 999px;
+      background: var(--graphite);
+      color: #fff;
+      font-weight: 800;
+      text-decoration: none;
+      box-shadow: 0 18px 40px rgba(0, 0, 0, .22);
+      touch-action: manipulation;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    @media (min-width: 760px) {
+      .hero {
+        padding-top: 72px;
+      }
+
+      .grid {
+        grid-template-columns: repeat(3, 1fr);
+      }
+
+      .section {
+        padding: 44px 0;
+      }
+
+      .fixed-cta {
+        right: 24px;
+        left: auto;
+        width: min(360px, calc(100% - 48px));
+      }
+    }
+  </style>
+</head>
+<body>
+  <header class="hero" id="top">
+    <div class="container">
+      <p class="eyebrow">Mobile-first HTML artifact</p>
+      <h1>Сильный заголовок, который сразу объясняет результат</h1>
+      <p class="lead">Короткое обещание: для кого эта страница, какую проблему закрывает и почему стоит продолжить.</p>
+      <div class="actions" aria-label="Основные действия">
+        <a class="button" href="#cta">Начать</a>
+        <a class="button secondary" href="#details">Посмотреть детали</a>
+      </div>
+      <figure class="section-visual" aria-label="Главный визуал">
+        <div class="visual-placeholder">Hero visual</div>
+      </figure>
+    </div>
+  </header>
+
+  <main>
+    <section class="section" id="details">
+      <div class="container">
+        <h2>Почему это важно</h2>
+        <div class="grid">
+          <article class="card">
+            <h3>Проблема</h3>
+            <p>Опиши текущий барьер простым человеческим языком.</p>
+          </article>
+          <article class="card">
+            <h3>Механика</h3>
+            <p>Покажи новый подход и почему он проще старого.</p>
+          </article>
+          <article class="card">
+            <h3>Результат</h3>
+            <p>Зафиксируй понятный outcome и следующий шаг.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="interactive">
+      <div class="container">
+        <h2>Выбери сценарий</h2>
+        <div class="tabs">
+          <input class="tab-input" type="radio" name="mode" id="tab-1" checked>
+          <input class="tab-input" type="radio" name="mode" id="tab-2">
+          <div class="tab-labels">
+            <label for="tab-1">Для старта</label>
+            <label for="tab-2">Для бизнеса</label>
+          </div>
+          <div class="tab-panel panel-1 card">
+            <h3>Быстрый старт</h3>
+            <p>Короткий путь для человека, который хочет понять ценность за пару минут.</p>
+          </div>
+          <div class="tab-panel panel-2 card">
+            <h3>Бизнес-сценарий</h3>
+            <p>Больше конкретики по процессам, внедрению, рискам и ожидаемому эффекту.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="faq">
+      <div class="container">
+        <h2>FAQ</h2>
+        <div class="faq-list">
+          <details class="faq-item">
+            <summary>Будет ли работать без JavaScript?</summary>
+            <p>Да. Основной контент и критичный интерактив остаются видимыми без JS.</p>
+          </details>
+          <details class="faq-item">
+            <summary>Можно ли отправить одним файлом?</summary>
+            <p>Да, если изображения оптимизированы и встроены base64 только после сжатия.</p>
+          </details>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="cta">
+      <div class="container">
+        <div class="card">
+          <h2>Финальный призыв к действию</h2>
+          <p class="muted">Повтори ценность и дай один ясный следующий шаг.</p>
+          <a class="button" href="#top">Вернуться наверх</a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <a class="fixed-cta" href="#cta">Перейти к действию</a>
+</body>
+</html>

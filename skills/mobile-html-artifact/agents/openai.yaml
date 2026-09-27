@@ -1,0 +1,5 @@
+interface:
+  display_name: "Mobile HTML Artifact"
+  short_description: "Create polished mobile-first HTML artifacts"
+  brand_color: "#FF8A1F"
+  default_prompt: "Use $mobile-html-artifact with $cc-design to create a polished autonomous mobile-first HTML page."
