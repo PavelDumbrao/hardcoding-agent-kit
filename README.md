@@ -1,5 +1,12 @@
 # Hard Coding Agent Kit
 
+## Какой комплект использовать на старте HARD CODING PRO
+
+**Обязательный стартовый комплект для всех потоков** — [полный Agent Kit (18 Skills + AGENTS.md + Hooks)](https://hardcoding.proaicommunity.online/guides/level-0/rules-skills-tools/assets/Hardcoding_PRO_Agent_Kit_Full_18_Skills_Hooks.zip). Скачай его, отправь своему coding-агенту и используй [готовый промпт установки](https://hardcoding.proaicommunity.online/guides/level-0/rules-skills-tools/assets/HARD_CODING_PRO_INSTALL_PROMPT.md). Агент сам исследует систему, установит правила, Skills и Hooks, затем проверит результат.
+
+**Этот репозиторий — отдельный расширенный практикум на 19 Skills**, с дополнительными адаптерами, Telegram-уведомлениями и собственным installer. Не считай его тем же самым архивом на 18 Skills и не устанавливай оба комплекта друг поверх друга без предварительного аудита агентом и резервных копий. [Общая интерактивная карта обучения](https://hardcoding.proaicommunity.online/guides/) рассчитана на все потоки, без привязки к номеру набора.
+
+
 Ученический Practical Hard Coding PRO про три слоя управления AI coding agent:
 
 **Инструкция → Skill → Hook.**
