@@ -8,7 +8,17 @@ from pathlib import Path
 from typing import Any
 
 HCAK_HOME = Path(os.environ.get("HCAK_HOME", "~/.hardcoding-agent-kit")).expanduser()
-RUNTIME = os.environ.get("HCAK_RUNTIME", "unknown")
+def _runtime_from_argv() -> str | None:
+    """На Windows хук вызывается как `py -3 hook.py --runtime claude` — без префикса HCAK_RUNTIME=."""
+    args = sys.argv[1:]
+    for i, a in enumerate(args):
+        if a == "--runtime" and i + 1 < len(args):
+            return args[i + 1]
+        if a.startswith("--runtime="):
+            return a.split("=", 1)[1]
+    return None
+
+RUNTIME = os.environ.get("HCAK_RUNTIME") or _runtime_from_argv() or "unknown"
 STATE_DIR = HCAK_HOME / "state" / RUNTIME
 SECRETS_DIR = HCAK_HOME / "secrets"
 

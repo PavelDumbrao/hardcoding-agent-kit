@@ -2,9 +2,13 @@
 from __future__ import annotations
 
 import argparse
+import copy
 import json
+import os
+import re
 import shutil
 import stat
+import sys
 from datetime import datetime
 from pathlib import Path
 
@@ -42,8 +46,31 @@ def merge_groups(existing:list,incoming:list)->list:
         if key not in seen: out.append(item);seen.add(key)
     return out
 
+IS_WINDOWS = os.name == "nt"
+POSIX_CMD = re.compile(r"^HCAK_RUNTIME=(\w+) python3 ~/\.hardcoding-agent-kit/hooks/([\w.-]+\.py)$")
+
+def python_launcher() -> str:
+    """Команда Python для Windows: `py -3` (ставится вместе с Python с python.org), иначе текущий интерпретатор."""
+    if shutil.which("py"): return "py -3"
+    if shutil.which("python"): return "python"
+    exe=sys.executable
+    return f'"{exe}"' if " " in exe else exe
+
+def platform_command(cmd:str) -> str:
+    """Mac/Linux — команда адаптера как есть. Windows — `py -3 "C:/Users/.../hooks/x.py" --runtime claude`:
+    без префикса VAR=, без ~ и без python3, поэтому работает в cmd, PowerShell и Git Bash."""
+    m=POSIX_CMD.match(cmd.strip())
+    if not IS_WINDOWS or not m: return cmd
+    runtime,script=m.groups();path=(DEST/"hooks"/script).as_posix()
+    return f'{python_launcher()} "{path}" --runtime {runtime}'
+
+def adapt_commands(node):
+    if isinstance(node,dict): return {k:(platform_command(v) if k=="command" and isinstance(v,str) else adapt_commands(v)) for k,v in node.items()}
+    if isinstance(node,list): return [adapt_commands(x) for x in node]
+    return node
+
 def merge_config(runtime:str):
-    cfg=RUNTIMES[runtime];path=Path(cfg["config"]);base=read_json(path);adapter=json.loads(Path(cfg["adapter"]).read_text());old_backup=backup(path);path.parent.mkdir(parents=True,exist_ok=True)
+    cfg=RUNTIMES[runtime];path=Path(cfg["config"]);base=read_json(path);adapter=adapt_commands(copy.deepcopy(json.loads(Path(cfg["adapter"]).read_text())));old_backup=backup(path);path.parent.mkdir(parents=True,exist_ok=True)
     if runtime=="zcode":
         base_hooks=base.setdefault("hooks",{});base_hooks["enabled"]=True;events=base_hooks.setdefault("events",{})
         for event,groups in adapter["hooks"]["events"].items(): events[event]=merge_groups(events.get(event,[]),groups)
@@ -85,5 +112,6 @@ def main()->int:
     if backups:
         print("Backups:")
         for item in backups: print(" -",item)
-    print("Следующий шаг: python3 ~/.hardcoding-agent-kit/hooks/smoke.py");print("Telegram: python3 ~/.hardcoding-agent-kit/configure_telegram.py");return 0
+    py="py -3" if IS_WINDOWS else "python3"
+    print(f"Следующий шаг: {py} ~/.hardcoding-agent-kit/hooks/smoke.py");print(f"Telegram: {py} ~/.hardcoding-agent-kit/configure_telegram.py");return 0
 if __name__=="__main__": raise SystemExit(main())

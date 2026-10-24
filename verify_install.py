@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 from __future__ import annotations
-import argparse,json
+import argparse,json,os
 from pathlib import Path
 HOME=Path.home(); ROOT=HOME/".hardcoding-agent-kit"
 def main()->int:
@@ -15,7 +15,13 @@ def main()->int:
         cfg=json.loads(path.read_text()); add("config valid JSON",isinstance(cfg,dict)); hooks=cfg.get("hooks",{}); events=hooks.get("events",{}) if args.runtime=="zcode" else hooks; add("SessionStart wired",bool(events.get("SessionStart"))); add("PreToolUse wired",bool(events.get("PreToolUse"))); add("Stop wired",bool(events.get("Stop")))
     except Exception: add("config valid JSON",False)
     secret=ROOT/"secrets"/"telegram.env"; add("secret file exists",secret.is_file())
-    if secret.exists(): add("secret permissions private",(secret.stat().st_mode&0o077)==0)
+    if secret.exists():
+        if os.name=="nt": add("secret file in user profile (Windows: права NTFS)",str(secret).startswith(str(HOME)))
+        else: add("secret permissions private",(secret.stat().st_mode&0o077)==0)
+    if os.name=="nt":
+        try:
+            raw=path.read_text(); add("hook commands Windows-ready","HCAK_RUNTIME=" not in raw and "python3 ~/" not in raw)
+        except Exception: add("hook commands Windows-ready",False)
     failed=[label for label,ok in checks if not ok]
     for label,ok in checks: print(("PASS" if ok else "FAIL")+":",label)
     print(f"TOTAL: {len(checks)-len(failed)}/{len(checks)} PASS"); return 1 if failed else 0

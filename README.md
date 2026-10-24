@@ -1,11 +1,21 @@
 # Hard Coding Agent Kit
 
-## Какой комплект использовать на старте HARD CODING PRO
+## Единый стартовый набор HARD CODING PRO
 
-**Обязательный стартовый комплект для всех потоков** — [полный Agent Kit (18 Skills + AGENTS.md + Hooks)](https://hardcoding.proaicommunity.online/guides/level-0/rules-skills-tools/assets/Hardcoding_PRO_Agent_Kit_Full_18_Skills_Hooks.zip). Скачай его, отправь своему coding-агенту и используй [готовый промпт установки](https://hardcoding.proaicommunity.online/guides/level-0/rules-skills-tools/assets/HARD_CODING_PRO_INSTALL_PROMPT.md). Агент сам исследует систему, установит правила, Skills и Hooks, затем проверит результат.
+**Этот репозиторий — единый официальный стартовый набор курса для всех потоков и всех агентов: Claude Code, Codex, ZCode.** Правила, 19 Skills и Hooks ставятся сразу, одной ссылкой. Ученику достаточно отправить агенту ссылку на этот репозиторий и фразу из [`PROMPT.md`](PROMPT.md): **«Установи всё по инструкции, но адаптируй под меня!»**
 
-**Этот репозиторий — отдельный расширенный практикум на 19 Skills**, с дополнительными адаптерами, Telegram-уведомлениями и собственным installer. Не считай его тем же самым архивом на 18 Skills и не устанавливай оба комплекта друг поверх друга без предварительного аудита агентом и резервных копий. [Общая интерактивная карта обучения](https://hardcoding.proaicommunity.online/guides/) рассчитана на все потоки, без привязки к номеру набора.
+Старый архив «Agent Kit Full 18 Skills» с сайта гайдов больше не используется. Если он уже стоит, этот набор безопасно ставится поверх: installer делает резервные копии изменённых Skills и конфигов, не трогает твою существующую инструкцию и добавляет только свои hook-группы. Два набора не нужно держать параллельно.
 
+[Общая интерактивная карта обучения](https://hardcoding.proaicommunity.online/guides/) рассчитана на все потоки.
+
+## Windows
+
+Команды ниже написаны для Mac и Linux. На Windows:
+
+- вместо `python3` — `py` (ставится вместе с Python с [python.org](https://www.python.org/downloads/));
+- вместо `bash install.sh --runtime <...>` — `py install.py --runtime <...>`.
+
+Если Python нет, агент предлагает поставить его с python.org и ждёт твоего «да». Installer на Windows сам прописывает Hooks в форме, которая работает в PowerShell, cmd и Git Bash: `py -3 "C:/Users/<ты>/.hardcoding-agent-kit/hooks/<hook>.py" --runtime <агент>`. Проверка `verify_install.py` на Windows отдельно проверяет, что команды Hooks подготовлены для Windows.
 
 Ученический Practical Hard Coding PRO про три слоя управления AI coding agent:
 
@@ -47,6 +57,8 @@ Telegram token вводится **только локально** через:
 python3 ~/.hardcoding-agent-kit/configure_telegram.py
 ```
 
+На Windows: `py ~/.hardcoding-agent-kit/configure_telegram.py`.
+
 Installer:
 - не стирает существующие инструкции;
 - перед изменением существующего JSON-конфига делает timestamped backup;
@@ -75,6 +87,8 @@ python3 ~/.hardcoding-agent-kit/hooks/smoke.py
 python3 ~/.hardcoding-agent-kit/verify_install.py --runtime <zcode|claude|codex>
 python3 ~/.hardcoding-agent-kit/hooks/test_notify.py
 ```
+
+На Windows те же команды через `py` вместо `python3`.
 
 `smoke.py` проверяет локальную логику. `verify_install.py` проверяет wiring. `test_notify.py` делает реальный Telegram E2E.
 

@@ -23,6 +23,8 @@ https://github.com/PavelDumbrao/hardcoding-agent-kit
 4. Если найдено несколько рантаймов (ZCode / Claude Code / Codex), спроси только какой из них настраиваем.
 5. Не говори «готово» без smoke + verify_install. Telegram считается готовым только после реального test_notify.
 6. Если предыдущая mutation имеет неизвестный исход — сначала readback, не повторяй её вслепую.
+7. Windows: везде вместо `python3` используй `py`, вместо `bash install.sh` — `py install.py`. Если Python не установлен — предложи поставить его с python.org и жди моего «да».
+8. Если уже стоит старый набор на 18 Skills — не удаляй его: installer сделает backup и обновит набор поверх.
 
 СДЕЛАЙ:
 
@@ -47,7 +49,8 @@ https://github.com/PavelDumbrao/hardcoding-agent-kit
   не затирая существующие скиллы с тем же именем (сделай backup, если версия отличается).
 
 ШАГ 4 · Установи:
-bash install.sh --runtime <zcode|claude|codex>
+Mac / Linux: bash install.sh --runtime <zcode|claude|codex>
+Windows: py install.py --runtime <zcode|claude|codex>
 
 Покажи только безопасный итог installer. Не печатай secret-файлы.
 
